@@ -16,7 +16,7 @@
 # (To distribute this file outside of CMake, substitute the full
 #  License text for the above reference.)
 
-include(WintermuteDefaults)
+include(WintermuteSettings)
 if (NOT DEFINED QT4_FOUND)
     include(FindQt4)
     include("${QT_USE_FILE}")

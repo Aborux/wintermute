@@ -22,10 +22,10 @@ set(WINTERMUTE_VERSION "${WINTERMUTE_MAJOR_VERSION}.${WINTERMUTE_MINOR_VERSION}"
 
 ## Includes.
 ## There are placed here because they depend on the PROJECT_LABEL value.
-include(WintermuteDefaults)
+include(WintermuteSettings)
 include(WintermuteMacros)
 
-## include paths.
+## Go through directories.
 add_subdirectory(cmake)
 add_subdirectory(src)
 add_subdirectory(data)

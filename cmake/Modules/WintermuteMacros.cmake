@@ -28,7 +28,7 @@
 # @todo Add documentation about macros used in Wintermute.
 
 find_package(PkgConfig)
-include(WintermuteDefaults)
+include(WintermuteSettings)
 include(UseWintermute)
 
 ## Set up documentation.

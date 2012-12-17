@@ -2,11 +2,11 @@ cmake_minimum_required(VERSION 2.8)
 project(WintermuteApplication)
 
 include(WintermuteMacros)
-include(UseWintermute)
 
+set(CMAKE_INCLUDE_CURRENT_DIRS ON)
 ## Configures
 configure_file("${PROJECT_SOURCE_DIR}/global.hpp.in"
-               "${PROJECT_SOURCE_DIR}/global.hpp" @ONLY)
+               "${CMAKE_CURRENT_BINARY_DIR}/global.hpp" @ONLY)
 
 file(GLOB_RECURSE WINTERMUTE_SOURCES "*.cpp")
 
@@ -15,8 +15,7 @@ set(WINTERMUTE_INCLUDE_DIRS ${WINTERMUTE_INCLUDE_DIR}
     ${QT_INCLUDE_DIR}
     ${QT_QTCORE_INCLUDE_DIR}
     ${QT_QTDBUS_INCLUDE_DIR}
-    ${QT_QTGUI_INCLUDE_DIR}
-    ${WINTER_PLUGIN_INCLUDE_INSTALL_DIR})
+    ${QT_QTGUI_INCLUDE_DIR})
 set(WINTERMUTE_LIBRARIES ${QT_QTCORE_LIBRARY}
     ${QT_QTDBUS_LIBRARY}
     ${QT_QTGUI_LIBRARY})
@@ -37,8 +36,8 @@ target_link_libraries(wintermute ${WINTERMUTE_LIBRARIES})
 set_target_properties(wintermute PROPERTIES
     DEFINE_SYMBOL "WINTER_EXPORT"
     VERSION ${WINTERMUTE_VERSION}
-    COMPILE_DEFINITIONS "${WINTERMUTE_COMPILE_DEFINITIONS}"
-    COMPILE_FLAGS "${WINTERMUTE_COMPILE_FLAGS}")
+    COMPILE_DEFINITIONS "${WINTERMUTE_COMPILE_DEFINITIONS}")
+#    COMPILE_FLAGS "${WINTERMUTE_COMPILE_FLAGS}")
 
 ## Installs
 install(TARGETS wintermute

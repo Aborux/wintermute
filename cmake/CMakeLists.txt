@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 
-include(WintermuteDefaults)
+include(WintermuteSettings)
 
 file(GLOB TEMPLATE_FILES "${CMAKE_SOURCE_DIR}/cmake/*.in")
 
