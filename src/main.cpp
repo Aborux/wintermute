@@ -24,15 +24,48 @@
  * @date 04/18/12 4:08:58 PM
  */
 
-#include <QApplication>
+#include <zmq.hpp>
+#include <iostream>
+#include <string>
+
+#include <unistd.h>
+
+#include "simplemessage.pb.h"
 #include "wintermute.hpp"
 
 using namespace Wintermute;
+using namespace std;
 
-int main (int p_argc, char** p_argv)
+int main (int argc, char** argv)
 {
-    qInstallMsgHandler (Logging::catchQDebugMessage);
-    Core::boot(p_argc, p_argv);
-    return QApplication::exec();
+    GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+    zmq::context_t context(1);
+    zmq::socket_t socket(context, ZMQ_REP);
+    socket.bind("tcp://*:8888");
+
+    std::cout << "Entering request loop..." << std::endl;
+    while (true) {
+    	zmq::message_t request;
+
+    	// Receive request
+    	socket.recv(&request);
+    	string req_str((char *) request.data());
+
+        SimpleMessage simpleMessage;
+        simpleMessage.ParseFromString(req_str);
+    	// std::cout << "Received request: " << req_str << endl;
+        cout << "Received request\n"
+             << "ID: " << simpleMessage.id() << endl
+             << "Content: " << simpleMessage.content() << endl
+             << "Importance: " << (simpleMessage.importance() == SimpleMessage::CRITICAL ? "Critical!\n\n" : "Non-critical...\n\n");
+
+    	sleep(1);
+
+    	zmq::message_t reply(17);
+    	memcpy((void *) reply.data(), "Request received.", 17);
+    	socket.send(reply);
+    }
+
+    return 0;
 }
-// kate: indent-mode cstyle; indent-width 4; replace-tabs on;
