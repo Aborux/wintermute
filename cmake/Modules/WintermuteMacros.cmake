@@ -252,3 +252,7 @@ macro(wntr_automoc _sources)
     endforeach(_source  ${_sources})
     qt4_automoc(${_sources})
 endmacro(wntr_automoc _sources)
+
+macro(wntr_protoc _files)
+    execute_process(COMMAND /usr/bin/protoc -I=${CMAKE_CURRENT_SOURCE_DIR} --cpp_out=${CMAKE_CURRENT_BINARY_DIR} ${_files})
+endmacro()
