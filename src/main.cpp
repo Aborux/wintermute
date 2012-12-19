@@ -44,7 +44,7 @@ int main (int argc, char** argv)
     zmq::socket_t socket(context, ZMQ_REP);
     socket.bind("tcp://*:8888");
 
-    std::cout << "Entering request loop..." << std::endl;
+    cout << "Entering request loop..." << endl;
     while (true) {
     	zmq::message_t request;
 
