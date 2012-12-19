@@ -54,7 +54,7 @@ int main (int argc, char** argv)
 
         SimpleMessage simpleMessage;
         simpleMessage.ParseFromString(req_str);
-    	// std::cout << "Received request: " << req_str << endl;
+
         cout << "Received request\n"
              << "ID: " << simpleMessage.id() << endl
              << "Content: " << simpleMessage.content() << endl

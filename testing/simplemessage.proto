@@ -1,5 +1,7 @@
 // Simple message for Wintermute, basically an experiment.
 
+option optimize_for = SPEED;
+
 message SimpleMessage {
 	required int32 id = 1;
 	required string content = 2;
@@ -10,5 +12,5 @@ message SimpleMessage {
 		CRITICAL = 2;
 	}
 
-	optional Importance importance = 3 [default = LOW];
+	optional Importance importance = 3;
 }
