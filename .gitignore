@@ -2,6 +2,7 @@
 *.kdev4
 *.patch
 .directory
+*.swp
 *.kate-swp*
 debian
 .pc
