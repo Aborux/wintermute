@@ -24,16 +24,13 @@
 #ifndef WINTERMUTE_CORE_HPP
 #define WINTERMUTE_CORE_HPP
 
-#include <QObject>
-#include <QVariantMap>
+#include <map>
+#include <string>
 
 #include <global.hpp>
 #include <diagnoser.hpp>
 
-class QApplication;
-class QSocketNotifier;
-
-WINTER_FORWARD_DECLARE_STRUCT(CorePrivate)
+using namespace std;
 
 WINTER_BEGIN_NAMESPACE
 
@@ -48,105 +45,17 @@ WINTER_BEGIN_NAMESPACE
  * @nonreentrant
  * @class Core wintermute.hpp "core.hpp"
  */
-/// @todo Implement a means of having this class catch the signals of the system.
-class Core : public QObject
+class Core
 {
-    Q_OBJECT
-    Q_DECLARE_PRIVATE(Core)
-    WINTER_SINGLETON(Core)
-
 public:
 
-    /**
-     * @brief Obtains a pointer to the current arguments.
-     *
-     * This map contains a normalized list of the arguments that were passed on the
-     * command line. This is used mainly to save the ease of plug-ins having to check
-     * the string list given by Qt.
-     *
-     * @note This list only contains the qualified arguments in a list. Support for
-     *       arbitrary arguments is coming soon.
-     * @todo Add support for arbitrary arguments.
-     * @fn arguments
-     */
-    static QVariantMap arguments();
+    Core (int argc, char **argv);
 
-    /**
-     * @brief Default constructor.
-     *
-     * @attention This constructor should NEVER be used, it's called by the main()
-     * method of Wintermute, and needs never to be called again.
-     *
-     * @fn Core
-     * @param argc The command line argument passed representing the number of given arguments.
-     * @param argv The command line argument passed representing the value of each argument.
-     * @internal
-     */
-    static void boot(int& p_argv, char** p_argc);
-
-    /**
-     * @brief Ends the program; with an optional exit code.
-     * @param p_exitCode The exit code to report to the system.
-     * @param p_closeRootApplication Whether or not ALL Wintermute instances should be closed.
-     * @fn exit
-     */
-    static void exit (const int p_exitCode = 0,
-                      const bool p_closeRootApplication = false);
-
-    /**
-     * @brief Ends the program with success code.
-     */
-    static void quit();
-
-signals:
-    /**
-     * @brief Raised once the core's ready to go.
-     *
-     * This signal is emitted when the core's done loading prerequisites.
-     * This is <b>after</b> all plug-ins have been loaded and the inter-
-     * process communication system is active.
-     *
-     * @fn initialized
-     * @see Wintermute::Core::Initialize()
-     */
-    void started() const;
-
-    /**
-     * @brief Raised once the core's ready to shut down.
-     *
-     * This signal is emitted when the core's ready to shutdown the system.
-     * This is <b>before</b> any plug-ins are unloaded, but not before they're
-     * deinitialized.
-     *
-     * @fn deinitialized
-     */
-    void stopped() const;
-
-protected slots:
-
-    /**
-     * @brief Initializes the system.
-     *
-     * Does the first bit of initialization work for the core process of Wintermute by
-     * loading the plug-ins and then the data system.
-     *
-     * @see Wintermute::Core::initialized
-     * @fn Initialize
-     */
-    static void start();
-
-    /**
-     * @brief Deinitializes the system.
-     *
-     * Cleans up all of the work for the core processes and runs the approriate disconnection methods.
-     *
-     * @see Wintermute::Core::deinitialized
-     * @fn Deinitialize
-     */
-    static void stop ();
+    int exec();
 
 private:
-    QScopedPointer<CorePrivate> d_ptr;
+    /// Endpoints of registered agents accessible by id.
+    map<int, string> _agents_endpoints;
 };
 
 WINTER_END_NAMESPACE

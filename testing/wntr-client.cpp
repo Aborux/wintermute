@@ -16,7 +16,7 @@ int main ()
     zmq::context_t context (1);
     zmq::socket_t socket (context, ZMQ_REQ);
 
-    std::cout << "Connecting to the Wintermute server..." << std::endl;
+    cout << "Connecting to the Wintermute server..." << endl;
     socket.connect ("tcp://localhost:8888");
 
     //  Do 10 requests, waiting each time for a response
@@ -37,7 +37,7 @@ int main ()
         //  Get the reply.
         zmq::message_t reply;
         socket.recv (&reply);
-        std::cout << "Received something... " << request_nbr << std::endl;
+        cout << "Received something... " << request_nbr << endl;
     }
     return 0;
 }

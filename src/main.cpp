@@ -24,48 +24,14 @@
  * @date 04/18/12 4:08:58 PM
  */
 
-#include <zmq.hpp>
-#include <iostream>
-#include <string>
-
-#include <unistd.h>
-
-#include "simplemessage.pb.h"
-#include "wintermute.hpp"
+// #include "serverrequest.hpp"
+#include "core.hpp"
 
 using namespace Wintermute;
 using namespace std;
 
 int main (int argc, char** argv)
 {
-    GOOGLE_PROTOBUF_VERIFY_VERSION;
-
-    zmq::context_t context(1);
-    zmq::socket_t socket(context, ZMQ_REP);
-    socket.bind("tcp://*:8888");
-
-    cout << "Entering request loop..." << endl;
-    while (true) {
-    	zmq::message_t request;
-
-    	// Receive request
-    	socket.recv(&request);
-    	string req_str((char *) request.data());
-
-        SimpleMessage simpleMessage;
-        simpleMessage.ParseFromString(req_str);
-
-        cout << "Received request\n"
-             << "ID: " << simpleMessage.id() << endl
-             << "Content: " << simpleMessage.content() << endl
-             << "Importance: " << (simpleMessage.importance() == SimpleMessage::CRITICAL ? "Critical!\n\n" : "Non-critical...\n\n");
-
-    	sleep(1);
-
-    	zmq::message_t reply(17);
-    	memcpy((void *) reply.data(), "Request received.", 17);
-    	socket.send(reply);
-    }
-
-    return 0;
+    Core *core = new Core (argc, argv);
+    return core->exec();
 }
