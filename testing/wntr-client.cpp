@@ -4,7 +4,9 @@
 #include <ctime>
 #include <cstdlib>
 
-#include "simplemessage.pb.h"
+// #include "simplemessage.pb.h"
+#include "coremessages.pb.h"
+#include "agentinfo.pb.h"
 
 using namespace std;
 
@@ -21,17 +23,29 @@ int main ()
 
     //  Do 10 requests, waiting each time for a response
     for (int request_nbr = 0; request_nbr != 10; ++request_nbr) {
-        SimpleMessage sm;
-        sm.set_id(rand());
-        sm.set_content("Take over the world!");
-        sm.set_importance((rand() % 2 == 0 ? SimpleMessage::CRITICAL : SimpleMessage::LOW));
+        // SimpleMessage sm;
+        // sm.set_id(rand());
+        // sm.set_content("Take over the world!");
+        // sm.set_importance((rand() % 2 == 0 ? SimpleMessage::CRITICAL : SimpleMessage::LOW));
 
-        string msg_data;
-        sm.SerializeToString(&msg_data);
+        // string msg_data;
+        // sm.SerializeToString(&msg_data);
 
-        zmq::message_t request(msg_data.size());
-        memcpy ((void *) request.data(), msg_data.c_str(), msg_data.size());
-        cout << "Sending message " << request_nbr << " with size " << msg_data.size() << "..." << endl;
+        CoreRequest req;
+        req.set_type(CoreRequest::GET_ENDPOINT);
+        req.set_id(1);
+
+        AgentInfo* sender_info = req.mutable_sender_info();
+
+        sender_info->set_id(111111);
+        sender_info->set_name("Wintermute Core Testing Client");
+
+        string req_str;
+        req.SerializeToString(&req_str);
+
+        zmq::message_t request(req_str.size());
+        memcpy (request.data(), req_str.c_str(), req_str.size());
+        cout << "Sending message " << request_nbr << " with size " << req.ByteSize() << "..." << endl;
         socket.send (request);
 
         //  Get the reply.
