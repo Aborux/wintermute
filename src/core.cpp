@@ -32,31 +32,54 @@
 #include "global.hpp"
 #include "core.hpp"
 
-#include "simplemessage.pb.h"
+// #include "simplemessage.pb.h"
 
 using namespace std;
 using namespace Wintermute;
 
 Core::Core (int argc, char **argv)
+    : _context(1), _reply_socket(_context, ZMQ_REP)
 {
     GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+    // DEBUG Section
+    _agents_names[1] = "core";
+    _agents_endpoints[1] = "tcp://*:8888";
+    ////////
+
     cout << "[~~~~~~~~ Wintermute Core Launching ~~~~~~~~]\n\n";
 
+    // Set sockets
+    _reply_socket.bind("tcp://*:8888");
+
     // Read configuration
+    // Configuration is read from file pointed by -c option. If no
+    // configuration file is provided then last saved config is used.
+    // Last saved config is read and saved using Protobuf.
+    // For now, textual configuration file overrides all settings if it is
+    // provided. In future we might implement merging.
 
     // Load modules
+    // Modules specified by config files will be loaded.
+    // vector<ModuleInfo> modules_to_load = config.getModules();
+    // for (auto it = modules_to_load.begin(); it != modules_to_load.end(); ++it) {
+    //  if (!this->loadModule(*it))
+    //      throw runtime_exception;
+    // }
 
     // Load agent's meta-data
+    // Agent's info is stored in the binary configuration storage (Protobuf)
+    // AgentInfoStorage agent_info;
+    // agent_info.ParseFromFileDescriptor("bazz");
+    // 
 
-    // Start agents    
+    // Start agents
+    // for agent_i in agent_info:
+    //      this->startAgent(agent_i);
 }
 
 int Core::exec()
 {
-    zmq::context_t context(1);
-    zmq::socket_t socket(context, ZMQ_REP);
-    socket.bind("tcp://*:8888");
-
     cout << "Entering request loop..." << endl;
     while (true) {
         // zmq::message_t request;
@@ -73,13 +96,71 @@ int Core::exec()
         //      << "Content: " << simpleMessage.content() << endl
         //      << "Importance: " << (simpleMessage.importance() == SimpleMessage::CRITICAL ? "Critical!\n\n" : "Non-critical...\n\n");
 
-        sleep(1);
+        // sleep(1);
 
         // zmq::message_t reply(17);
         // memcpy((void *) reply.data(), "Request received.", 17);
         // socket.send(reply);
 
+        zmq::message_t request_msg;
+        _reply_socket.recv(&request_msg);
+        string request_str((char *) request_msg.data());
+
+        CoreRequest request;
+        request.ParseFromString(request_str);
+
+        reply(request);
     }
 
     return 0;
+}
+
+void Core::send(AgentInfo& response)
+{
+    string response_str;
+    response.SerializeToString(&response_str);
+
+    zmq::message_t reply(response_str.size());
+    memcpy((void *) reply.data(), response_str.c_str(), response_str.size());
+    _reply_socket.send(reply);
+}
+
+void Core::reply(CoreRequest& request)
+{
+    AgentInfo sender_info = request.sender_info();
+    int agent_id = request.id();
+    AgentInfo response;
+
+    switch (request.type()) {
+        case CoreRequest::GET_ENDPOINT:
+            if (agent_id != 0) {
+                response.set_endpoint(_agents_endpoints[agent_id]);
+                send(response);
+            } else {
+                // _logger.warning("Wrong request passed by " sender_info.name())
+                cout << "Wrong request passed by " << sender_info.name() << endl;
+
+                // Send empty response; I'll think about some kind of "exception" message
+                send(response);
+            }
+            break;
+
+        case CoreRequest::GET_NAME:
+            if (agent_id != 0) {
+                response.set_name(_agents_names[agent_id]);
+                send(response);
+            } else {
+                // _logger.warning("Wrong request passed by " sender_info.name())
+                cout << "Wrong request passed by " << sender_info.name() << endl;
+                
+                // Send empty response; I'll think about some kind of "exception" message
+                send(response);
+            }
+            break;
+
+        default:
+                // _logger.warning("Wrong request passed by " sender_info.name())
+            cout << "Wrong request passed by " << sender_info.name() << endl;
+    }
+            //////// To be continued!
 }

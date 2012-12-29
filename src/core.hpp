@@ -30,6 +30,11 @@
 #include <global.hpp>
 #include <diagnoser.hpp>
 
+#include <zmq.hpp>
+
+#include "coremessages.pb.h"
+#include "agentinfo.pb.h"
+
 using namespace std;
 
 WINTER_BEGIN_NAMESPACE
@@ -53,12 +58,19 @@ public:
 
     int exec();
 
+    void send(AgentInfo& response);
+    void reply(CoreRequest& request);
+
 private:
+    zmq::context_t _context;
+    zmq::socket_t _reply_socket;
+    // Logger _logger;
+    
     /// Endpoints of registered agents accessible by id.
     map<int, string> _agents_endpoints;
+    map<int, string> _agents_names;
 };
 
 WINTER_END_NAMESPACE
 
 #endif /* WINTERMUTE_CORE_HPP */
-// kate: indent-mode cstyle; indent-width 4; replace-tabs on;
