@@ -3,7 +3,6 @@ project(WintermuteApplication)
 
 include(WintermuteMacros)
 
-find_package(ZMQ REQUIRED)
 find_package(Protobuf REQUIRED)
 find_package(Pthreads REQUIRED)
 

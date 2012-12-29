@@ -24,6 +24,7 @@ find_package(Qt4 ${WINTER_QT_VERSION} COMPONENTS
     QtGui
     QtDBus
     REQUIRED)
+find_package(ZMQ REQUIRED)
 
 ## Go through directories.
 add_subdirectory(cmake)

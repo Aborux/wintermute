@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
 
-find_package(ZMQ REQUIRED)
 find_package(Pthreads REQUIRED)
 find_package(Protobuf REQUIRED)
 
@@ -11,11 +10,15 @@ set(PROTOC_FLAGS
     )
 execute_process(COMMAND /usr/bin/protoc ${PROTOC_FLAGS} --cpp_out=${CMAKE_CURRENT_BINARY_DIR}
     ${PROJECT_SOURCE_DIR}/src/simplemessage.proto
+    ${PROJECT_SOURCE_DIR}/src/agentinfo.proto
+    ${PROJECT_SOURCE_DIR}/src/coremessages.proto
     )
 
 add_executable(wntr-client
     wntr-client.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/simplemessage.pb.cc
+    ${CMAKE_CURRENT_BINARY_DIR}/agentinfo.pb.cc
+    ${CMAKE_CURRENT_BINARY_DIR}/coremessages.pb.cc
     )
 target_link_libraries(wntr-client
     ${ZMQ_LIBRARIES}
