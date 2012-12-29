@@ -1,0 +1,9 @@
+// Agent Info messages
+// They contain data useful for agent identification.
+
+message AgentInfo {
+	optional int32 id = 1;
+	optional string name = 2;
+	// optional Atom = 3;
+	optional string endpoint = 4;
+}

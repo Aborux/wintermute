@@ -1,0 +1,17 @@
+// Core Messages
+// Sent to/from the Core.
+
+import "agentinfo.proto";
+
+message CoreRequest {
+	enum Type {
+		GET_ENDPOINT = 0;
+		GET_NAME = 1;
+		GET_ID = 2;
+	}
+
+	optional Type type = 1;
+	optional int32 id = 2;
+	optional string name = 3;
+	optional AgentInfo sender_info = 4;
+}
