@@ -10,7 +10,7 @@
 
 using namespace std;
 
-int main ()
+int main (int argc, char **argv)
 {
     srand(time(NULL));
 
@@ -44,14 +44,14 @@ int main ()
         req.SerializeToString(&req_str);
 
         zmq::message_t request(req_str.size());
-        memcpy (request.data(), req_str.c_str(), req_str.size());
+        memcpy (request.data(), req_str.data(), req_str.size());
         cout << "Sending message " << request_nbr << " with size " << req.ByteSize() << "..." << endl;
         socket.send (request);
 
         //  Get the reply.
         zmq::message_t reply;
         socket.recv (&reply);
-        cout << "Received something... " << request_nbr << endl;
+        cout << "Received something... " << request_nbr << endl << endl;
     }
     return 0;
 }

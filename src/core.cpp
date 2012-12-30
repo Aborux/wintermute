@@ -43,7 +43,7 @@ Core::Core (int argc, char **argv)
     GOOGLE_PROTOBUF_VERIFY_VERSION;
 
     // DEBUG Section
-    _agents_names[1] = "core";
+    _agents_names[1] = "Core";
     _agents_endpoints[1] = "tcp://*:8888";
     ////////
 
@@ -104,7 +104,7 @@ int Core::exec()
 
         zmq::message_t request_msg;
         _reply_socket.recv(&request_msg);
-        string request_str((char *) request_msg.data());
+        string request_str(static_cast<char *>(request_msg.data()), request_msg.size());
 
         CoreRequest request;
         request.ParseFromString(request_str);
@@ -121,7 +121,7 @@ void Core::send(AgentInfo& response)
     response.SerializeToString(&response_str);
 
     zmq::message_t reply(response_str.size());
-    memcpy((void *) reply.data(), response_str.c_str(), response_str.size());
+    memcpy(reply.data(), response_str.data(), response_str.size());
     _reply_socket.send(reply);
 }
 
@@ -152,7 +152,7 @@ void Core::reply(CoreRequest& request)
             } else {
                 // _logger.warning("Wrong request passed by " sender_info.name())
                 cout << "Wrong request passed by " << sender_info.name() << endl;
-                
+
                 // Send empty response; I'll think about some kind of "exception" message
                 send(response);
             }
