@@ -23,14 +23,6 @@ int main (int argc, char **argv)
 
     //  Do 10 requests, waiting each time for a response
     for (int request_nbr = 0; request_nbr != 10; ++request_nbr) {
-        // SimpleMessage sm;
-        // sm.set_id(rand());
-        // sm.set_content("Take over the world!");
-        // sm.set_importance((rand() % 2 == 0 ? SimpleMessage::CRITICAL : SimpleMessage::LOW));
-
-        // string msg_data;
-        // sm.SerializeToString(&msg_data);
-
         CoreRequest req;
         req.set_type(CoreRequest::GET_ENDPOINT);
         req.set_id(1);
@@ -51,7 +43,13 @@ int main (int argc, char **argv)
         //  Get the reply.
         zmq::message_t reply;
         socket.recv (&reply);
-        cout << "Received something... " << request_nbr << endl << endl;
+        cout << "Received something... " << endl;
+
+        string reply_str(static_cast<char *> (reply.data()), reply.size());
+        AgentInfo rep;
+        rep.ParseFromString(reply_str);
+
+        cout << "Requested endpoint seems to be " << rep.endpoint() << endl << endl;
     }
     return 0;
 }

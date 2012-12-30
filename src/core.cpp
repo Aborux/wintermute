@@ -82,26 +82,6 @@ int Core::exec()
 {
     cout << "Entering request loop..." << endl;
     while (true) {
-        // zmq::message_t request;
-
-        // // Receive request
-        // socket.recv(&request);
-        // string req_str((char *) request.data());
-
-        // SimpleMessage simpleMessage;
-        // simpleMessage.ParseFromString(req_str);
-
-        // cout << "Received request\n"
-        //      << "ID: " << simpleMessage.id() << endl
-        //      << "Content: " << simpleMessage.content() << endl
-        //      << "Importance: " << (simpleMessage.importance() == SimpleMessage::CRITICAL ? "Critical!\n\n" : "Non-critical...\n\n");
-
-        // sleep(1);
-
-        // zmq::message_t reply(17);
-        // memcpy((void *) reply.data(), "Request received.", 17);
-        // socket.send(reply);
-
         zmq::message_t request_msg;
         _reply_socket.recv(&request_msg);
         string request_str(static_cast<char *>(request_msg.data()), request_msg.size());
