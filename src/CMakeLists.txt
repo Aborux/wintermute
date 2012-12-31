@@ -3,9 +3,6 @@ project(WintermuteApplication)
 
 include(WintermuteMacros)
 
-find_package(Protobuf REQUIRED)
-find_package(Pthreads REQUIRED)
-
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 ## Configures
 configure_file("${PROJECT_SOURCE_DIR}/global.hpp.in"

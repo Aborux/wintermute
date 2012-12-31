@@ -25,6 +25,8 @@ find_package(Qt4 ${WINTER_QT_VERSION} COMPONENTS
     QtDBus
     REQUIRED)
 find_package(ZMQ REQUIRED)
+find_package(Pthreads REQUIRED)
+find_package(Protobuf REQUIRED)
 
 ## Go through directories.
 add_subdirectory(cmake)

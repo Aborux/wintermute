@@ -1,8 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
 
-find_package(Pthreads REQUIRED)
-find_package(Protobuf REQUIRED)
-
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(PROTOC_FLAGS
     -I${CMAKE_CURRENT_SOURCE_DIR}
