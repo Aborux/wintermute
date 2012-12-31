@@ -11,8 +11,17 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 configure_file("${PROJECT_SOURCE_DIR}/global.hpp.in"
                "${CMAKE_CURRENT_BINARY_DIR}/global.hpp" @ONLY)
 
-file(GLOB PROTOBUF_FILES *.proto)
-wntr_protoc(${PROTOBUF_FILES})
+# file(GLOB PROTOBUF_FILES *.proto)
+# wntr_protoc(${PROTOBUF_FILES})  <--- BUGGY
+
+set(PROTOC_FLAGS
+    -I${PROJECT_SOURCE_DIR}
+    )
+execute_process(COMMAND /usr/bin/protoc ${PROTOC_FLAGS} --cpp_out=${CMAKE_CURRENT_BINARY_DIR}
+    ${PROJECT_SOURCE_DIR}/simplemessage.proto
+    ${PROJECT_SOURCE_DIR}/agentinfo.proto
+    ${PROJECT_SOURCE_DIR}/coremessages.proto
+    )
 
 file(GLOB_RECURSE WINTERMUTE_SOURCES "*.cpp" "${CMAKE_CURRENT_BINARY_DIR}/*.cc")
 
