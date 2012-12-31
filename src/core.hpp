@@ -58,7 +58,7 @@ public:
 
     int exec();
 
-    void send(AgentInfo& response);
+    void send_response(AgentInfo& response);
     void reply(CoreRequest& request);
 
 private:

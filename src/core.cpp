@@ -95,7 +95,7 @@ int Core::exec()
     return 0;
 }
 
-void Core::send(AgentInfo& response)
+void Core::send_response(AgentInfo& response)
 {
     string response_str;
     response.SerializeToString(&response_str);
@@ -114,33 +114,38 @@ void Core::reply(CoreRequest& request)
     switch (request.type()) {
         case CoreRequest::GET_ENDPOINT:
             if (agent_id != 0) {
-                response.set_endpoint(_agents_endpoints[agent_id]);
-                send(response);
+                if (_agents_endpoints.count(agent_id)) {
+                    // _logger.info("Found agent endpoint for ID " agent_id);
+                    response.set_endpoint(_agents_endpoints[agent_id]);
+
+                } // else { _logger.info("Agent ID " agent_id " not found.")}
             } else {
                 // _logger.warning("Wrong request passed by " sender_info.name())
                 cout << "Wrong request passed by " << sender_info.name() << endl;
 
                 // Send empty response; I'll think about some kind of "exception" message
-                send(response);
             }
             break;
 
         case CoreRequest::GET_NAME:
             if (agent_id != 0) {
-                response.set_name(_agents_names[agent_id]);
-                send(response);
+                if (_agents_names.count(agent_id)) {
+                    // _logger.info("Found agent name for ID " agent_id);
+                    response.set_name(_agents_names[agent_id]);
+
+                } // else { _logger.info("Agent ID " agent_id " not found.");}
             } else {
                 // _logger.warning("Wrong request passed by " sender_info.name())
                 cout << "Wrong request passed by " << sender_info.name() << endl;
 
                 // Send empty response; I'll think about some kind of "exception" message
-                send(response);
             }
             break;
 
         default:
-                // _logger.warning("Wrong request passed by " sender_info.name())
+            // _logger.warning("Wrong request passed by " sender_info.name())
             cout << "Wrong request passed by " << sender_info.name() << endl;
     }
+    send_response(response);
             //////// To be continued!
 }
