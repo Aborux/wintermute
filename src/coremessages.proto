@@ -8,10 +8,16 @@ message CoreRequest {
 		GET_ENDPOINT = 0;
 		GET_NAME = 1;
 		GET_ID = 2;
+		REGISTER = 3;
 	}
 
 	optional Type type = 1;
 	optional int32 id = 2;
 	optional string name = 3;
 	optional AgentInfo sender_info = 4;
+}
+
+message CoreResponse {
+	optional int32 assigned_id = 1;
+	optional AgentInfo query_result = 2;
 }

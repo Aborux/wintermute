@@ -76,6 +76,7 @@ Core::Core (int argc, char **argv)
     // Start agents
     // for agent_i in agent_info:
     //      this->startAgent(agent_i);
+    // Optional: notify user that agents started
 }
 
 int Core::exec()
