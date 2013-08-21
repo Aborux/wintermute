@@ -1,58 +1,87 @@
-cmake_minimum_required(VERSION 2.8)
-project(WintermuteApplication)
+###############################################################################
+### Copyright (C) 2013 Jacky Alcine <jacky.alcine@thesii.org>
+###
+### This file is part of Wintermute, the extensible AI platform.
+###
+### Wintermute is free software; you can redistribute it and/or modify
+### it under the terms of the GNU General Public License as published by
+### the Free Software Foundation; either version 3 of the License, or
+### (at your option) any later version.
+###
+### Wintermute is distributed in the hope that it will be useful,
+### but WITHOUT ANY WARRANTY; without even the implied warranty of
+### MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+### GNU General Public License for more details.
+###
+### You should have received a copy of the GNU General Public License
+### along with Wintermute.  If not, see <http://www.gnu.org/licenses/>.
+###############################################################################
 
-## MODULE INCLUDES
-## ===============
-include(UseWintermute)
-include(WintermuteDefaults)
-include(WintermuteDependencies)
-include(WintermuteMacros)
+include(WintermuteVersioning)
 
-## SOURCE CODE MANIPULATION
-## ========================
-## Generate the global.hpp file for Wintermute.
-configure_file("${PROJECT_SOURCE_DIR}/global.hpp.in"
-               "${PROJECT_SOURCE_DIR}/global.hpp" @ONLY)
+set(WINTERMUTE_BINARY_INCLUDE_DIRS ${WINTERMUTE_INCLUDE_DIRS}
+  ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+list(REMOVE_ITEM WINTERMUTE_BINARY_INCLUDE_DIRS ${WINTERMUTE_INCLUDE_DIR})
 
-## Grab all of the files to be compiled.
-file(GLOB WINTERMUTE_SOURCES "*.cpp")
+# Grab the sources!
+set(WINTERMUTE_SOURCES
+  main.cpp
+  Wintermute/application.cpp
+  Wintermute/arguments.cpp
+  Wintermute/logging.cpp
+  Wintermute/plugin.cpp
+  Wintermute/plugininterfaceable.cpp
+  Wintermute/factory.cpp
+  Wintermute/temporaryplugin.cpp
+  Wintermute/version.cpp
+  )
 
-## BUILD VARIABLES
-## ===============
-set(WINTERMUTE_BUILD_INCLUDE_DIRS "${WINTERMUTE_INCLUDE_DIRS}"
-    ${PROJECT_BINARY_DIR} ${PROJECT_SOURCE_DIR})
+set(WINTERMUTE_HEADERS 
+  ## Pretty headers
+  Wintermute/Application
+  Wintermute/Arguments
+  Wintermute/Globals
+  Wintermute/Logging
+  Wintermute/Plugin
+  Wintermute/PluginInterfaceable
+  Wintermute/Version
 
-## Make sure the build environment can't find silly files.
-list(REMOVE_ITEM WINTERMUTE_BUILD_INCLUDE_DIRS ${WINTERMUTE_INCLUDE_DIR})
-list(REMOVE_ITEM WINTERMUTE_BUILD_INCLUDE_DIRS ${WINTER_PLUGIN_INCLUDE_INSTALL_DIR})
+  ## Native headers
+  Wintermute/application.hpp
+  Wintermute/arguments.hpp
+  Wintermute/logging.hpp
+  Wintermute/version.hpp
+  Wintermute/factory.hpp
+  Wintermute/plugin.hpp
+  Wintermute/plugininterfaceable.hpp
+  "${CMAKE_CURRENT_BINARY_DIR}/globals.hpp"
+  )
 
-## Include the build directories.
-include_directories(${WINTERMUTE_BUILD_INCLUDE_DIRS})
+# Wrap up the sources.
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/src/Wintermute")
+qt4_automoc(${WINTERMUTE_SOURCES})
 
-## Wrap up the sources and generate documentation.
-wntr_automoc("${WINTERMUTE_SOURCES}")
-wntr_make_docs(PATH "${PROJECT_SOURCE_DIR}")
-
-## TARGETS
-## =======
-## = Define and describe the Wintermute executable.
+# Define the executable.
 add_executable(wintermute ${WINTERMUTE_SOURCES})
-target_link_libraries(wintermute ${WINTERMUTE_LIBRARIES})
+
+# Define properties for Wintermute's executable.
 set_target_properties(wintermute PROPERTIES
-    DEFINE_SYMBOL "WINTER_EXPORT"
-    VERSION "${WINTERMUTE_VERSION}"
-    COMPILE_DEFINITIONS "${WINTERMUTE_COMPILE_DEFINITIONS}"
-    COMPILE_FLAGS "${WINTERMUTE_COMPILE_FLAGS}")
+  FOLDER        "Wintermute/Core"
+  #VERSION       "${WINTERMUTE_VERSION}"
+  PROJECT_LABEL "Wintermute")
 
-## INSTALLATIONS
-## =============
-## = Installs the artificats generated.
+# Add the necessary properties to the 'wintermute' executable.
+wintermute_add_properties(wintermute)
+
+include_directories(${WINTERMUTE_BINARY_INCLUDE_DIRS})
+target_link_libraries(wintermute ${WINTERMUTE_LIBRARIES})
+
+# Generate the global definition file.
+configure_file(globals.hpp.in Wintermute/globals.hpp @ONLY)
+
+# Install the binary.
 install(TARGETS wintermute
-        RUNTIME DESTINATION "${WINTER_BIN_INSTALL_DIR}"
-        COMPONENT bin)
+  RUNTIME DESTINATION ${WINTERMUTE_BIN_DIR})        
 
-wntr_install_headers(HEADERS_PATH "${PROJECT_SOURCE_DIR}"
-                     DESTINATION  "${WINTER_INCLUDE_INSTALL_DIR}")
-
-configure_file("${CMAKE_SOURCE_DIR}/cmake/Modules/FindWintermute.cmake.in"
-               "${CMAKE_BINARY_DIR}/InstallFiles/FindWintermute.cmake" @ONLY)
+install(FILES ${WINTERMUTE_HEADERS}
+  DESTINATION ${WINTERMUTE_CORE_INCLUDE_DIR})
