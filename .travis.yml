@@ -31,6 +31,6 @@ after_success:
   - coveralls --exclude tests --exclude /usr/include --exclude test
 
 notifications:
-  email: me@jalcine.me
+  email: gentoolx@gmail.com
   on_success: change
   on_failure: always
