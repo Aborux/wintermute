@@ -59,6 +59,7 @@ function(get_git_head_revision _refspecvar _hashvar)
 	endif()
 
 	if(NOT EXISTS "${GIT_DIR}/HEAD")
+    message(ERROR "Can't find Git HEAD.")
 		return()
 	endif()
 	set(HEAD_FILE "${GIT_DATA}/HEAD")
